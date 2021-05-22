@@ -1,0 +1,16 @@
+<main>
+<mat-accordion *ngIf="clientes.length > 0" >
+  <mat-expansion-panel *ngFor="let cliente of clientes">
+    <mat-expansion-panel-header>
+      Nome : {{ cliente.nome }}
+    </mat-expansion-panel-header>
+    <p>Telefone: {{ cliente.fone }} </p>
+    <p>Cliente: {{ cliente.email }} </p>
+    <mat-action-row>
+      <a mat-button [routerLink]="['/editar', cliente.id]" color="primary">Editar</a>
+      <button mat-button color="warn" (click)="onDelete(cliente.id)">Remover</button>
+    </mat-action-row>
+  </mat-expansion-panel>
+</mat-accordion>
+<p *ngIf="clientes.length <= 0" class="text-center">Nenhum cliente cadastrado!</p>
+</main>

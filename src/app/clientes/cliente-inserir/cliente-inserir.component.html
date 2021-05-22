@@ -1,0 +1,18 @@
+<mat-card>
+  <form (submit)="onSalvarCliente(clienteForm)" #clienteForm="ngForm">
+    <mat-form-field>
+      <mat-error>Digite um nome válido </mat-error>
+      <input required minlength="4" type="text" matInput placeholder="Nome" name="nome" [ngModel]="cliente?.nome" #nome="ngModel">
+    </mat-form-field>
+    <mat-form-field>
+      <mat-error>Digite um telefone válido </mat-error>
+      <input required type="text" matInput placeholder="Telefone" name="fone" [ngModel]="cliente?.fone" >
+    </mat-form-field>
+    <mat-form-field>
+      <mat-error>Digite um email válido </mat-error>
+      <input required email type="email" matInput placeholder="Email" name="email" [ngModel]="cliente?.email">
+    </mat-form-field>
+    <button color="accent" mat-raised-button>Cadastrar</button>
+  </form>
+</mat-card>
+

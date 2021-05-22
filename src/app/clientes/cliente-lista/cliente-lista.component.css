@@ -1,0 +1,15 @@
+main {
+  margin-top: 1rem;
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+}
+:host {
+  margin-top: 1rem;
+  display: block;
+
+}
+.text-center{
+  text-align: center;
+}
+

@@ -1,0 +1,82 @@
+const express = require("express");
+const router = express.Router();
+const Cliente = require("../models/cliente");
+const multer = require('multer');
+
+const MIME_TYPE_EXTENSAO_MAPA = {
+  'image/png': 'png',
+  'image/jpeg': 'jpg',
+  'image/jpg': 'jpg',
+  'image/bmp': 'bmp'
+}
+
+const armazenamento = multer.diskStorage({
+  destination: (req, file, callback) => {
+    let erro = MIME_TYPE_EXTENSAO_MAPA[file.mimetype] ? null : new Error('Mime Type Invalid')
+    callback(null, 'backend/imagens')
+  },
+  filename: (req, file, callback) => {
+    const nome = file.originalname.toLowerCase().split(" ").join("-");
+    const extensao = MIME_TYPE_EXTENSAO_MAPA[file.mimetype];
+    callback(null, `${nome}-${Date.now()}.${extensao}`)
+  }
+})
+
+router.post('/api/clientes', multer({storage: armazenamento}).single('imagem'), (req, res, next) => {
+  const cliente = new Cliente({
+    nome: req.body.nome,
+    fone: req.body.fone,
+    email: req.body.email
+  })
+  cliente.save().then(
+    (clienteInserido) => {
+      res.status(201).json({mensagem: 'Cliente inserido com sucesso', id: clienteInserido._id})
+    }
+  )
+  // const cliente = req.body;
+  // console.log(cliente);
+  // clientes.push(cliente);
+  // res.status(201).json({mensagem: 'Cliente inserido!'});
+})
+router.get('/api/clientes', (req, res, next) => {
+  Cliente.find().then(documents =>{
+  res.status(200).json({
+    mensagem: "Tudo Ok",
+    clientes: documents
+  })
+}).catch(() => {
+  console.log("Erro de requisição")
+});
+})
+
+router.get('/api/clientes/:id', (req, res, next) => {
+  Cliente.findById(req.params.id).then((cli) => {
+    if (cli)
+    res.status(200).json(cli)
+    else
+      res.status(404).json({mensagem: "Cliente não encontrado"})
+  })
+})
+
+router.delete('/api/clientes/:id', (req, res, next) =>{
+  Cliente.deleteOne({_id: req.params.id})
+    .then((resultado) => {
+      console.log(resultado);
+      res.status(200).json({mensagem: 'Cliente Removido!'})
+    })
+})
+
+router.put('/api/clientes/:id', (req, res, next) => {
+  const cliente = new Cliente ({
+    _id: req.params.id,
+    nome: req.body.nome,
+    fone: req.body.fone,
+    email: req.body.email
+  });
+  Cliente.updateOne({_id: req.params.id}, cliente).then((resultado) => {
+    console.log(resultado);
+    res.status(200).json({mensagem:'Atualização realizada com sucesso!'})
+  })
+})
+
+module.exports = router;

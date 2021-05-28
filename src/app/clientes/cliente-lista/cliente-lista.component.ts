@@ -11,6 +11,7 @@ export class ClienteListaComponent implements OnInit, OnDestroy {
 
   clientes:Cliente[] = [];
   private clientesSubscription: Subscription;
+  public estaCarregando:boolean = false;
 
   constructor(public clienteService: ClienteService ) { }
 
@@ -19,13 +20,18 @@ export class ClienteListaComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void{
+
+    this.estaCarregando = true;
+
     this.clienteService.getClientes();
 
 
 
     //Insvrevendo o componen CLienteLista como observador do observavel 'listaClientesAtualizada'
-    this.clientesSubscription = this.clienteService.getListaClienteAtualizadaObservable().subscribe( (clientes: Cliente[]) => {
+    this.clientesSubscription = this.clienteService.getListaClienteAtualizadaObservable().subscribe((clientes: Cliente[]) => {
     this.clientes = clientes
+
+    this.estaCarregando = false;
     });
   }
 

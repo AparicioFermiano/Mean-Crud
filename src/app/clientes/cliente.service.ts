@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http'
 import { Injectable } from "@angular/core";
 import { map } from "rxjs/operators";
-import { stringify } from "@angular/compiler/src/util";
+import { Router } from "@angular/router"
 
 @Injectable({ providedIn: 'root' })
 export class ClienteService {
@@ -12,7 +12,7 @@ export class ClienteService {
   private clientes:Cliente[] = []
   private listaClientesAtualizada = new Subject<Cliente[]>()
 
-  constructor(private httpClient: HttpClient) {
+  constructor(private httpClient: HttpClient, private router: Router) {
 
   }
 
@@ -56,19 +56,32 @@ export class ClienteService {
   }
 
 
-  AdicionarCliente(nome:string, fone:string, email:string) {
-    const cliente: Cliente = {
-      id: "",
-      nome: nome,
-      fone: fone,
-      email: email
-    }
-    this.httpClient.post<{mensagem: string, id:string }>('http://localhost:3500/api/clientes', cliente).subscribe((dados) => {
+  AdicionarCliente(nome:string, fone:string, email:string, imagem: File) {
+    // const cliente: Cliente = {
+    //   id: "",
+    //   nome: nome,
+    //   fone: fone,
+    //   email: email,
+    // }
+    const dadosCliente = new FormData();
+    dadosCliente.append('nome', nome);
+    dadosCliente.append('fone', fone);
+    dadosCliente.append('email', email);
+    dadosCliente.append('imagem', imagem);
+
+    this.httpClient.post<{mensagem: string, id:string }>('http://localhost:3500/api/clientes', dadosCliente).subscribe((dados) => {
       console.log(dados.mensagem);
-      cliente.id = dados.id
+      //Cliente.id = dados.id
+      const cliente: Cliente = {
+        id: dados.id,
+        nome: nome,
+        fone: fone,
+        email: email
+      }
       this.clientes.push(cliente)
        //Alertando os OBSERVADORES de que os dados foram atualizados
       this.listaClientesAtualizada.next([...this.clientes])
+      this.router.navigate(['/']);
     })
   }
 
@@ -77,25 +90,23 @@ export class ClienteService {
   getListaClienteAtualizadaObservable() {
     return this.listaClientesAtualizada.asObservable()
   }
-  getCliente (idCliente: string)
- {
-   return { ...this.clientes.find((cli) => cli.id === idCliente)};
- }
+  getCliente (idCliente: string){
+    //return {...this.clientes.find((cli) => cli.id === idCliente)};
+    return this.httpClient.get<{_id: string, nome: string, fone: string, email:
+    string}>(`http://localhost:3500/api/clientes/${idCliente}`);
+  }
  atualizarCliente (id:string, nome: string, fone: string, email:string) {
   const cliente: Cliente = {id, nome, fone, email};
-  this.httpClient.put(`http://localhost:3000/api/clientes/#{id}`, cliente).subscribe((res => {
+  this.httpClient.put(`http://localhost:3500/api/clientes/${id}`, cliente).subscribe((res => {
     const copia = [...this.clientes];
     const indice = copia.findIndex(cli => cli.id === cliente.id);
     copia[indice] = cliente;
     this.clientes = copia;
     this.listaClientesAtualizada.next([...this.clientes]);
+
+    this.router.navigate(['/']);
   }));
 }
-
- 
-
-
-
 
 
 }

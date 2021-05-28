@@ -6,3 +6,19 @@ mat-card {
 mat-form-field, input {
   width: 100%;
 }
+mat-progress-spinner {
+  margin: auto;
+}
+
+input[type="file"] {
+  visibility: hidden;
+}
+
+.imagem-preview{
+  height: 5rem;
+  margin: 1rem 0;
+}
+
+.imagem-preview img {
+  height: 100%;
+}

@@ -27,7 +27,7 @@ export class ClienteListaComponent implements OnInit, OnDestroy {
 
 
 
-    //Insvrevendo o componen CLienteLista como observador do observavel 'listaClientesAtualizada'
+    //Inscrevendo o component CLienteLista como observador do observavel 'listaClientesAtualizada'
     this.clientesSubscription = this.clienteService.getListaClienteAtualizadaObservable().subscribe((clientes: Cliente[]) => {
     this.clientes = clientes
 

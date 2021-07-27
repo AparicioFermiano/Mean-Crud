@@ -28,6 +28,7 @@ router.post('/api/clientes', multer({storage: armazenamento}).single('imagem'), 
     fone: req.body.fone,
     email: req.body.email
   })
+  console.log('\n\n\n',req.body)
   cliente.save().then(
     (clienteInserido) => {
       res.status(201).json({mensagem: 'Cliente inserido com sucesso', id: clienteInserido._id})
